@@ -10,3 +10,9 @@ DATABASES = {
         'PORT': os.environ['RDS_PORT'],
     }
 }
+
+MEDIA_ROOT = '/app/media'
+MEDIA_URL = '/media/'
+
+STATIC_ROOT = '/app/static'
+STATIC_URL = '/static/'

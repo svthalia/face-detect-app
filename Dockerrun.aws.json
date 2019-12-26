@@ -1,0 +1,24 @@
+{
+  "AWSEBDockerrunVersion": "1",
+  "Image": {
+    "Name": "sversteeg/beanstalk-python37-dlib",
+    "Update": "true"
+  },
+  "Entrypoint": "/usr/local/bin/entrypoint_production.sh",
+  "Ports": [
+    {
+      "ContainerPort": "8000"
+    }
+  ],
+  "Volumes": [
+    {
+      "HostDirectory": "/var/app/static",
+      "ContainerDirectory": "/app/static"
+    },
+    {
+      "HostDirectory": "/var/app/media",
+      "ContainerDirectory": "/app/media"
+    }
+  ],
+  "Logging": "/var/app/vps/log"
+}

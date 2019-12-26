@@ -10,6 +10,9 @@ django = "^3.0.1"
 face_recognition = "^1.2.3"
 django-bootstrap4 = "^1.1.1"
 awscli = "^1.16.309"
+requests = "<2.21"
+urllib3 = "<1.25"
+python-dateutil = "<2.8.1"
 
 [tool.poetry.dev-dependencies]
 
