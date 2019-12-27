@@ -13,8 +13,7 @@ class Command(BaseCommand):
         parser.add_argument('token', type=str)
 
     def handle(self, *args, **options):
-        Album.objects.all().delete()
-        FaceEncoding.objects.all().delete()
+        Album.objects.last().delete()
 
         headers = {
             'Authorization': f'Token {options["token"]}'
@@ -24,16 +23,22 @@ class Command(BaseCommand):
             headers=headers)
 
         for album in albums.json():
+            if Album.objects.filter(pk=album['pk']).exists():
+                continue
+
             Album.objects.create(
                 pk=album['pk'],
                 name=album['title']
             )
+
+            self.stdout.write(f'Working on {album["pk"]} {album["title"]}')
 
             album = requests.get(
                 f'https://thalia.nu/api/v1/photos/albums/{album["pk"]}',
                 headers=headers).json()
 
             for photo in album['photos']:
+                FaceEncoding.objects.filter(image_id=photo['pk']).delete()
                 detector.obtain_encodings(
                     photo['pk'],
                     requests.get(photo['file']['large'], stream=True).raw
