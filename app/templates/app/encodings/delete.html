@@ -1,0 +1,14 @@
+{% extends 'app/base.html' %}
+{% load bootstrap4 %}
+
+{% block title %}Delete encoding{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <form action="" method="post">
+            {% csrf_token %}
+            {% bootstrap_form form %}
+            {% bootstrap_button "Confirm delete" button_type="submit" button_class="btn-danger" %}
+        </form>
+    </div>
+{% endblock %}

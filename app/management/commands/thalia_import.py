@@ -13,7 +13,9 @@ class Command(BaseCommand):
         parser.add_argument('token', type=str)
 
     def handle(self, *args, **options):
-        Album.objects.last().delete()
+        last_album = Album.objects.last()
+        last_album.delete()
+        FaceEncoding.objects.filter(album_id=last_album.pk)
 
         headers = {
             'Authorization': f'Token {options["token"]}'
@@ -23,10 +25,9 @@ class Command(BaseCommand):
             headers=headers)
 
         for album in albums.json():
-            if Album.objects.filter(pk=album['pk']).exists():
-                continue
+            existed = Album.objects.filter(pk=album['pk']).exists()
 
-            Album.objects.create(
+            Album.objects.get_or_create(
                 pk=album['pk'],
                 name=album['title']
             )
@@ -38,8 +39,15 @@ class Command(BaseCommand):
                 headers=headers).json()
 
             for photo in album['photos']:
-                FaceEncoding.objects.filter(image_id=photo['pk']).delete()
-                detector.obtain_encodings(
-                    photo['pk'],
-                    requests.get(photo['file']['large'], stream=True).raw
-                )
+                if existed:
+                    FaceEncoding.objects.filter(
+                        image_id=photo['pk']
+                    ).update(
+                        album_id=album['pk']
+                    )
+                else:
+                    FaceEncoding.objects.filter(image_id=photo['pk']).delete()
+                    detector.obtain_encodings(
+                        photo['pk'], album['pk'],
+                        requests.get(photo['file']['large'], stream=True).raw
+                    )

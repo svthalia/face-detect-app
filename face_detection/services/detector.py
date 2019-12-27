@@ -3,11 +3,11 @@ import face_recognition
 from face_detection.models import FaceEncoding
 
 
-def obtain_encodings(image_id, image_file):
+def obtain_encodings(image_id, album_id, image_file):
     encodings = _get_encodings(image_file)
     models = []
     for encoding in encodings:
-        models.append(_save_encoding(image_id, encoding))
+        models.append(_save_encoding(image_id, album_id, encoding))
     return models
 
 
@@ -16,9 +16,9 @@ def _get_encodings(image_file):
     return face_recognition.face_encodings(img)
 
 
-def _save_encoding(image_id, encoding):
+def _save_encoding(image_id, album_id, encoding):
     encoding_model = FaceEncoding.encoding_to_model(
-        image_id, encoding)
+        image_id, album_id, encoding)
     encoding_model.save()
     return encoding_model
 

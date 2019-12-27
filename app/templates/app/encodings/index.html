@@ -1,0 +1,29 @@
+{% extends 'app/base.html' %}
+{% load bootstrap4 %}
+
+{% block title %}Encodings{% endblock %}
+
+{% block content %}
+    <div class="row">
+        {% for encoding in encodings %}
+            <div class="col-12">
+                <form action="{% url 'encodings:delete' encoding.pk %}"
+                      method="post">
+                    {% csrf_token %}
+                    {{ encoding.pk }} - <input type="submit" value="Delete"
+                                               class="btn btn-danger"/>
+                </form>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block auth_info %}
+    {% if request.user.is_authenticated %}
+        <p class="text-center">
+            <a href="{% url 'index' %}">Index</a> -
+            <a href="{% url 'encodings:create' %}">Create new</a> -
+            <a href="{% url 'logout' %}">Logout</a>
+        </p>
+    {% endif %}
+{% endblock %}

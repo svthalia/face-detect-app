@@ -1,10 +1,12 @@
 import numpy as np
-from django.db.models import Model, FloatField, IntegerField
+from django.db.models import Model, FloatField, IntegerField, TextField
 
 
 class FaceEncoding(Model):
     user_id = IntegerField(blank=True, null=True)
-    image_id = IntegerField()
+    album_id = IntegerField(blank=True, null=True)
+    image_id = IntegerField(blank=True, null=True)
+
     field0 = FloatField()
     field1 = FloatField()
     field2 = FloatField()
@@ -135,8 +137,8 @@ class FaceEncoding(Model):
     field127 = FloatField()
 
     @staticmethod
-    def encoding_to_model(image_id, encoding_array):
-        encoding = FaceEncoding(image_id=image_id)
+    def encoding_to_model(image_id, album_id, encoding_array):
+        encoding = FaceEncoding(image_id=image_id, album_id=album_id)
         for i in range(0, 128):
             setattr(encoding, f'field{i}', encoding_array[i])
         return encoding

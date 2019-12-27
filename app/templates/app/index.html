@@ -5,6 +5,9 @@
 
 {% block content %}
     <div class="row">
+            <div class="col-12">
+                <a href="{% url 'my-photos' %}">Photos of me</a>
+            </div>
             {% for album in albums %}
                 <div class="col-12">
                     <a href="{% url 'album' album.pk %}">{{ album.name }}</a>

@@ -1,0 +1,21 @@
+{% extends 'app/base.html' %}
+{% load bootstrap4 %}
+
+{% block bootstrap4_extra_head %}
+{% endblock %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-4 offset-4">
+            <form action="" method="post">
+                {% csrf_token %}
+                <p class="text-center">You have been logged out.</p>
+                <p class="text-center">
+                    <a href="{% url 'index' %}">Go back</a>
+                </p>
+            </form>
+        </div>
+    </div>
+{% endblock %}

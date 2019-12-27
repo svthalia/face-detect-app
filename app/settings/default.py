@@ -25,6 +25,10 @@ BASE_DIR = os.path.abspath(os.path.join(
     '..', '..'))
 
 
+AUTHENTICATION_BACKENDS = ['app.backends.concrexit.ConcrexitBackend']
+LOGIN_URL = '/user/login/'
+LOGIN_REDIRECT_URL = '/'
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
@@ -68,7 +72,7 @@ ROOT_URLCONF = 'app.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

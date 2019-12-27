@@ -5,7 +5,16 @@
 
 {% block bootstrap4_content %}
     <div class="container">
-        <h1>{% block page_title %}{% endblock %}</h1>
+        <h1 class="text-center my-4">{% block page_title %}{% endblock %}</h1>
+        {% block auth_info %}
+            {% if request.user.is_authenticated %}
+                <p class="text-center">
+                    <a href="{% url 'index' %}">Index</a> -
+                    <a href="{% url 'encodings:index' %}">Encodings</a> -
+                    <a href="{% url 'logout' %}">Logout</a>
+                </p>
+            {% endif %}
+        {% endblock %}
 
         {% autoescape off %}{% bootstrap_messages %}{% endautoescape %}
 
