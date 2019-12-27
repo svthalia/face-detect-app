@@ -13,17 +13,10 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 from os import getenv
 
-# Custom settings
-
-THALIA_API_KEY = getenv('THALIA_API_KEY',
-                        'f86b66aae8d491c6ed923ad825300eaaf951c138')
-
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.abspath(os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
     '..', '..'))
-
 
 AUTHENTICATION_BACKENDS = ['app.backends.concrexit.ConcrexitBackend']
 LOGIN_URL = '/user/login/'
