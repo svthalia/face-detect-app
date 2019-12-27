@@ -1,6 +1,14 @@
 {% extends 'app/base.html' %}
 {% load bootstrap4 %}
 
-{% block title %}Index Page{% endblock %}
+{% block title %}Photos{% endblock %}
 
-{% block content %}Hello{% endblock %}
+{% block content %}
+    <div class="row">
+            {% for album in albums %}
+                <div class="col-12">
+                    <a href="{% url 'album' album.pk %}">{{ album.name }}</a>
+                </div>
+            {% endfor %}
+        </div>
+{% endblock %}

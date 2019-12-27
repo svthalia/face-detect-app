@@ -1,0 +1,14 @@
+{% extends 'app/base.html' %}
+{% load bootstrap4 %}
+
+{% block title %}Album{% endblock %}
+
+{% block content %}
+    <div class="row">
+        {% for photo in photos %}
+            <div class="col-3 my-2">
+            <a href="{{ photo.file.full }}" target="_blank"><img class="w-100" src="{{ photo.file.medium }}" /></a>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

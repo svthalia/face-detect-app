@@ -5,7 +5,6 @@ from face_detection.models import FaceEncoding
 
 def obtain_encodings(image_id, image_file):
     encodings = _get_encodings(image_file)
-    print(encodings)
     models = []
     for encoding in encodings:
         models.append(_save_encoding(image_id, encoding))

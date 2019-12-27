@@ -19,6 +19,7 @@ from django.urls import path
 from app import views
 
 urlpatterns = [
-    path('', views.IndexView.as_view()),
+    path('album/<int:pk>', views.AlbumView.as_view(), name='album'),
+    path('', views.IndexView.as_view(), name='index'),
     path('admin/', admin.site.urls),
 ]

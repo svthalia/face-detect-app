@@ -11,6 +11,13 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+from os import getenv
+
+# Custom settings
+
+THALIA_API_KEY = getenv('THALIA_API_KEY',
+                        'f86b66aae8d491c6ed923ad825300eaaf951c138')
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.abspath(os.path.join(
@@ -22,7 +29,7 @@ BASE_DIR = os.path.abspath(os.path.join(
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get(
+SECRET_KEY = getenv(
     'DJANGO_SECRET_KEY', '1g6utt(cs!bhvi84=j7tv8y#r)@1908@rgz2jp0c()l=205)28')
 
 # SECURITY WARNING: don't run with debug turned on in production!

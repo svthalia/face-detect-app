@@ -13,6 +13,7 @@ awscli = "^1.16.309"
 requests = "<2.21"
 urllib3 = "<1.25"
 python-dateutil = "<2.8.1"
+psycopg2-binary = "^2.8.4"
 
 [tool.poetry.dev-dependencies]
 
