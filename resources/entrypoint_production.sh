@@ -25,7 +25,7 @@ exec uwsgi --chdir /usr/src/ \
     --limit-post 0 \
     --post-buffering 16384 \
     --thunder-lock \
-    --logto '/app/log/uwsgi.log' \
+    --logto '/usr/log/uwsgi.log' \
     --ignore-sigpipe \
     --ignore-write-errors \
     --disable-write-exception
