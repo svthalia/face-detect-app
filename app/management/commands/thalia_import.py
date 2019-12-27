@@ -13,7 +13,7 @@ class Command(BaseCommand):
         parser.add_argument('token', type=str)
 
     def handle(self, *args, **options):
-        last_album = Album.objects.last()
+        last_album = Album.objects.first()
         last_album.delete()
         FaceEncoding.objects.filter(album_id=last_album.pk)
 

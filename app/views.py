@@ -37,7 +37,7 @@ class AlbumsDetailView(DetailView):
                 'Authorization': f'Token {self.request.session["token"]}'
             }).json()
 
-        context['title']  = data['title']
+        context['title'] = data['title']
         context['photos'] = data['photos']
 
         return context
@@ -50,30 +50,41 @@ class MyPhotosView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        photos = []
-
         user_encodings = UserEncoding.objects.filter(user=self.request.user)
-        encoding_data = [
-            x.encoding.fields_to_encoding() for x in user_encodings]
+        distance_function = 'min(1,'
+        for user_encoding in user_encodings:
+            encoding = user_encoding.encoding.fields_to_encoding()
+            distance_function += 'sqrt('
+            for i in range(0, 128):
+                distance_function += f'power(field{i} - {encoding[i]}, 2) + '
+            distance_function = distance_function[0:-2] + '),'
+        distance_function = distance_function[0:-1] + ')'
 
+        data_obj = FaceEncoding.objects.exclude(album_id=None).extra(
+            select={
+                'distance': distance_function
+            },
+            where=['distance < 0.49']
+        ).order_by('distance')
+
+        photos = []
         albums = {}
 
-        for encoding in FaceEncoding.objects.exclude(album_id=None):
-            if (True in face_recognition.compare_faces(
-                    encoding_data, encoding.fields_to_encoding(), 0.49)):
-
-                if encoding.album_id in albums:
-                    data = albums[encoding.album_id]
-                else:
-                    data = requests.get(
-                        f'https://thalia.nu/api/v1/photos/albums/{encoding.album_id}/',
-                        headers={
-                            'Authorization': f'Token {self.request.session["token"]}'
-                        }).json()
-                    albums[encoding.album_id] = data
-                for x in filter(lambda x: x['pk'] == encoding.image_id,
-                                data['photos']):
-                    photos.append(x)
+        for encoding in data_obj:
+            if encoding.album_id in albums:
+                data = albums[encoding.album_id]
+            else:
+                data = requests.get(
+                    f'https://thalia.nu/api/v1/photos/albums/'
+                    f'{encoding.album_id}/',
+                    headers={
+                        'Authorization':
+                            f'Token {self.request.session["token"]}'
+                    }).json()
+                albums[encoding.album_id] = data
+            for x in filter(lambda x: x['pk'] == encoding.image_id,
+                            data['photos']):
+                photos.append(x)
 
         context['title'] = 'Photos of me'
         context['photos'] = photos
