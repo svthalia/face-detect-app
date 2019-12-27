@@ -13,7 +13,7 @@ class Command(BaseCommand):
         parser.add_argument('token', type=str)
 
     def handle(self, *args, **options):
-        last_album = Album.objects.first()
+        last_album = Album.objects.order_by('pk').first()
         last_album.delete()
         FaceEncoding.objects.filter(album_id=last_album.pk)
 
@@ -25,7 +25,8 @@ class Command(BaseCommand):
             headers=headers)
 
         for album in albums.json():
-            existed = Album.objects.filter(pk=album['pk']).exists()
+            if Album.objects.filter(pk=album['pk']).exists():
+                continue
 
             Album.objects.get_or_create(
                 pk=album['pk'],
@@ -39,15 +40,8 @@ class Command(BaseCommand):
                 headers=headers).json()
 
             for photo in album['photos']:
-                if existed:
-                    FaceEncoding.objects.filter(
-                        image_id=photo['pk']
-                    ).update(
-                        album_id=album['pk']
-                    )
-                else:
-                    FaceEncoding.objects.filter(image_id=photo['pk']).delete()
-                    detector.obtain_encodings(
-                        photo['pk'], album['pk'],
-                        requests.get(photo['file']['large'], stream=True).raw
-                    )
+                FaceEncoding.objects.filter(image_id=photo['pk']).delete()
+                detector.obtain_encodings(
+                    photo['pk'], album['pk'],
+                    requests.get(photo['file']['large'], stream=True).raw
+                )
