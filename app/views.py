@@ -7,6 +7,7 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.generic import ListView, DetailView, DeleteView, FormView, \
     TemplateView
+from django.db import connection
 
 from app.forms import UserEncodingCreateForm
 from app.models import Album, UserEncoding
@@ -51,7 +52,12 @@ class MyPhotosView(TemplateView):
         context = super().get_context_data(**kwargs)
 
         user_encodings = UserEncoding.objects.filter(user=self.request.user)
-        distance_function = 'min(1,'
+
+        func = 'least'
+        if connection.vendor == 'sqlite':
+            func = 'min'
+
+        distance_function = f'{func}(1,'
         for user_encoding in user_encodings:
             encoding = user_encoding.encoding.fields_to_encoding()
             distance_function += 'sqrt('
@@ -61,11 +67,8 @@ class MyPhotosView(TemplateView):
         distance_function = distance_function[0:-1] + ')'
 
         data_obj = FaceEncoding.objects.exclude(album_id=None).extra(
-            select={
-                'distance': distance_function
-            },
-            where=['distance < 0.49']
-        ).order_by('distance')
+            where=[f'{distance_function} < 0.49']
+        )
 
         photos = []
         albums = {}

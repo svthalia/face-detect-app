@@ -14,8 +14,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         last_album = Album.objects.order_by('pk').first()
-        last_album.delete()
-        FaceEncoding.objects.filter(album_id=last_album.pk)
+        if last_album:
+            last_album.delete()
+            FaceEncoding.objects.filter(album_id=last_album.pk)
 
         headers = {
             'Authorization': f'Token {options["token"]}'
