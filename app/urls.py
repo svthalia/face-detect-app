@@ -20,6 +20,7 @@ from app import views
 
 urlpatterns = [
     path('', views.MyPhotosView.as_view(), name='index'),
+    path('token-auth/', views.TokenAuth.as_view(), name='token-auth'),
     path('admin/', admin.site.urls),
     path('user/', include('django.contrib.auth.urls')),
     path('albums/', include((

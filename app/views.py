@@ -1,18 +1,35 @@
-import face_recognition
 import requests
+from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.db import connection
 from django.http import HttpResponseRedirect
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.generic import ListView, DetailView, DeleteView, FormView, \
     TemplateView
-from django.db import connection
 
 from app.forms import UserEncodingCreateForm
 from app.models import Album, UserEncoding
 from face_detection.models import FaceEncoding
 from face_detection.services import detector
+
+
+class TokenAuth(View):
+    def get(self, request, *args, **kwargs):
+        if 'token' in request.GET:
+            response = requests.get(
+                f'https://thalia.nu/api/v1/members/me',
+                headers={
+                    'Authorization': f'Token {request.GET["token"]}'
+                }).json()
+            user = User.objects.get(pk=response['pk'])
+
+            login(request, user=user)
+            request.session['token'] = request.GET['token']
+        return redirect('index')
 
 
 @method_decorator(login_required, 'dispatch')
@@ -22,7 +39,9 @@ class AlbumsIndexView(ListView):
     context_object_name = 'albums'
     ordering = '-pk'
 
+
 albums_cache = {}
+
 
 @method_decorator(login_required, 'dispatch')
 class AlbumsDetailView(DetailView):
