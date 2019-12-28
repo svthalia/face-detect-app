@@ -41,7 +41,7 @@ class AlbumsIndexView(ListView):
     ordering = '-pk'
 
 
-albums_cache = TTLCache(maxsize=10, ttl=1800)
+albums_cache = TTLCache(maxsize=50, ttl=1800)
 
 
 @method_decorator(login_required, 'dispatch')
