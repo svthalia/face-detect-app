@@ -15,6 +15,7 @@ urllib3 = "<1.25"
 python-dateutil = "<2.8.1"
 psycopg2-binary = "^2.8.4"
 uwsgi = "^2.0.18"
+cachetools = "^4.0.0"
 
 [tool.poetry.dev-dependencies]
 

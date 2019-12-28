@@ -1,4 +1,5 @@
 import requests
+from cachetools import TTLCache
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -40,7 +41,7 @@ class AlbumsIndexView(ListView):
     ordering = '-pk'
 
 
-albums_cache = {}
+albums_cache = TTLCache(maxsize=10, ttl=1800)
 
 
 @method_decorator(login_required, 'dispatch')
