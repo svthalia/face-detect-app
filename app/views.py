@@ -22,6 +22,7 @@ class AlbumsIndexView(ListView):
     context_object_name = 'albums'
     ordering = '-pk'
 
+albums_cache = {}
 
 @method_decorator(login_required, 'dispatch')
 class AlbumsDetailView(DetailView):
@@ -72,10 +73,9 @@ class MyPhotosView(TemplateView):
                 where=[f'{distance_function} < 0.49']
             )
 
-            albums = {}
             for encoding in data_obj:
-                if encoding.album_id in albums:
-                    data = albums[encoding.album_id]
+                if encoding.album_id in albums_cache:
+                    data = albums_cache[encoding.album_id]
                 else:
                     data = requests.get(
                         f'https://thalia.nu/api/v1/photos/albums/'
@@ -84,7 +84,7 @@ class MyPhotosView(TemplateView):
                             'Authorization':
                                 f'Token {self.request.session["token"]}'
                         }).json()
-                    albums[encoding.album_id] = data
+                    albums_cache[encoding.album_id] = data
                 for x in filter(lambda x: x['pk'] == encoding.image_id,
                                 data['photos']):
                     photos.append(x)
