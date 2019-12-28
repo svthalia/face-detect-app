@@ -17,7 +17,7 @@ from face_detection.services import detector
 
 @method_decorator(login_required, 'dispatch')
 class AlbumsIndexView(ListView):
-    template_name = 'app/index.html'
+    template_name = 'app/albums/index.html'
     model = Album
     context_object_name = 'albums'
     ordering = '-pk'
@@ -25,7 +25,7 @@ class AlbumsIndexView(ListView):
 
 @method_decorator(login_required, 'dispatch')
 class AlbumsDetailView(DetailView):
-    template_name = 'app/album.html'
+    template_name = 'app/albums/detail.html'
     model = Album
     context_object_name = 'album'
 
@@ -46,48 +46,48 @@ class AlbumsDetailView(DetailView):
 
 @method_decorator(login_required, 'dispatch')
 class MyPhotosView(TemplateView):
-    template_name = 'app/album.html'
+    template_name = 'app/myphotos.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
         user_encodings = UserEncoding.objects.filter(user=self.request.user)
-
-        func = 'least'
-        if connection.vendor == 'sqlite':
-            func = 'min'
-
-        distance_function = f'{func}(1,'
-        for user_encoding in user_encodings:
-            encoding = user_encoding.encoding.fields_to_encoding()
-            distance_function += 'sqrt('
-            for i in range(0, 128):
-                distance_function += f'power(field{i} - {encoding[i]}, 2) + '
-            distance_function = distance_function[0:-2] + '),'
-        distance_function = distance_function[0:-1] + ')'
-
-        data_obj = FaceEncoding.objects.exclude(album_id=None).extra(
-            where=[f'{distance_function} < 0.49']
-        )
-
         photos = []
-        albums = {}
 
-        for encoding in data_obj:
-            if encoding.album_id in albums:
-                data = albums[encoding.album_id]
-            else:
-                data = requests.get(
-                    f'https://thalia.nu/api/v1/photos/albums/'
-                    f'{encoding.album_id}/',
-                    headers={
-                        'Authorization':
-                            f'Token {self.request.session["token"]}'
-                    }).json()
-                albums[encoding.album_id] = data
-            for x in filter(lambda x: x['pk'] == encoding.image_id,
-                            data['photos']):
-                photos.append(x)
+        if user_encodings.exists():
+            func = 'least'
+            if connection.vendor == 'sqlite':
+                func = 'min'
+
+            distance_function = f'{func}(1,'
+            for user_encoding in user_encodings:
+                encoding = user_encoding.encoding.fields_to_encoding()
+                distance_function += 'sqrt('
+                for i in range(0, 128):
+                    distance_function += f'power(field{i} - {encoding[i]}, 2) + '
+                distance_function = distance_function[0:-2] + '),'
+            distance_function = distance_function[0:-1] + ')'
+
+            data_obj = FaceEncoding.objects.exclude(album_id=None).extra(
+                where=[f'{distance_function} < 0.49']
+            )
+
+            albums = {}
+            for encoding in data_obj:
+                if encoding.album_id in albums:
+                    data = albums[encoding.album_id]
+                else:
+                    data = requests.get(
+                        f'https://thalia.nu/api/v1/photos/albums/'
+                        f'{encoding.album_id}/',
+                        headers={
+                            'Authorization':
+                                f'Token {self.request.session["token"]}'
+                        }).json()
+                    albums[encoding.album_id] = data
+                for x in filter(lambda x: x['pk'] == encoding.image_id,
+                                data['photos']):
+                    photos.append(x)
 
         context['title'] = 'Photos of me'
         context['photos'] = photos

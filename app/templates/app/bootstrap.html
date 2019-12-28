@@ -9,7 +9,7 @@
         {% block auth_info %}
             {% if request.user.is_authenticated %}
                 <p class="text-center">
-                    <a href="{% url 'index' %}">Index</a> -
+                    <a href="{% url 'index' %}">Photos of me</a> -
                     <a href="{% url 'encodings:index' %}">Encodings</a> -
                     <a href="{% url 'logout' %}">Logout</a>
                 </p>

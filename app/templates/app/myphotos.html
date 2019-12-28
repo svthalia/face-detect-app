@@ -9,6 +9,8 @@
             <div class="col-3 my-2">
             <a href="{{ photo.file.full }}" target="_blank"><img class="w-100" src="{{ photo.file.medium }}" /></a>
             </div>
+        {% empty %}
+            Go to encodings and add a picture of yourself to discover all the photos of you in the index.
         {% endfor %}
     </div>
 {% endblock %}

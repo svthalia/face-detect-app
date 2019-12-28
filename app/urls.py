@@ -19,11 +19,18 @@ from django.urls import path, include
 from app import views
 
 urlpatterns = [
-    path('album/<int:pk>', views.AlbumsDetailView.as_view(), name='album'),
-    path('', views.AlbumsIndexView.as_view(), name='index'),
-    path('my-photos/', views.MyPhotosView.as_view(), name='my-photos'),
+    path('', views.MyPhotosView.as_view(), name='index'),
     path('admin/', admin.site.urls),
     path('user/', include('django.contrib.auth.urls')),
+    path('albums/', include((
+        [
+            path('', views.AlbumsIndexView.as_view(),
+                 name='index'),
+            path('<int:pk>/',
+                 views.AlbumsDetailView.as_view(),
+                 name='detail'),
+        ], 'albums'
+    ), namespace='albums')),
     path('encodings/', include((
         [
             path('', views.UserEncodingIndexView.as_view(),
