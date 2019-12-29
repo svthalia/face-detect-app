@@ -1,0 +1,31 @@
+version: '3.5'
+
+services:
+    postgres:
+        image: postgres:11.1
+        volumes:
+            - /var/lib/postgresql/
+        environment: &postgresvars
+            POSTGRES_DB: postgres
+    web:
+        image: sversteeg/beanstalk-python37-dlib
+        build: .
+        entrypoint: bash /usr/local/bin/entrypoint.sh
+        command: runserver 0.0.0.0:8001
+        ports:
+            - 8001:8001
+        depends_on:
+            - postgres
+        volumes:
+            - ./:/usr/src/
+            - app:/app/
+        environment: &webvars
+            <<: *postgresvars
+            ENVIRONMENT: 'DOCKER_COMPOSE'
+            DJANGO_DEBUG: 'True'
+            POSTGRES_HOST: postgres
+            DJANGO_SECRET: 'do_not_use_in_prod'
+
+volumes:
+    app:
+        driver: local
