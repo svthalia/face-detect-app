@@ -1,7 +1,7 @@
 {
   "AWSEBDockerrunVersion": "1",
   "Image": {
-    "Name": "sversteeg/beanstalk-python37-dlib",
+    "Name": "sversteeg/beanstalk-python38-dlib",
     "Update": "true"
   },
   "Entrypoint": "/usr/local/bin/entrypoint_production.sh",
