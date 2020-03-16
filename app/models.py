@@ -11,3 +11,4 @@ class Album(Model):
 class UserEncoding(Model):
     user = ForeignKey(settings.AUTH_USER_MODEL, on_delete=CASCADE)
     encoding = ForeignKey(FaceEncoding, on_delete=CASCADE)
+    description = TextField(blank=True, null=True, max_length=100)

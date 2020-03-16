@@ -1,16 +1,33 @@
 {% extends 'app/base.html' %}
-{% load bootstrap4 %}
+{% load bootstrap4 compress static %}
 
 {% block title %}{{ title }}{% endblock %}
 
+{% block bootstrap4_extra_script %}
+    {{ block.super }}
+    <script type="text/javascript"
+            src="{% static "js/jquery.min.js" %}"></script>
+    <script type="text/javascript"
+            src="{% static "js/jquery.fancybox.min.js" %}"></script>
+    {% compress js %}
+        <script type="text/javascript"
+                src="{% static "js/main.js" %}"></script>
+    {% endcompress %}
+{% endblock %}
+
 {% block content %}
-    <div class="row">
+    <div class="row text-center">
         {% for photo in photos %}
-            <div class="col-3 my-2">
-            <a href="{{ photo.file.full }}" target="_blank"><img class="w-100" src="{{ photo.file.medium }}" /></a>
+            <div class="col-3 my-2 photo-card">
+                <a href="{{ photo.file.full }}" target="_blank"
+                   data-rotation="{{ photo.rotation }}"
+                   data-fancybox="gallery">
+                    <img class="w-100" src="{{ photo.file.medium }}"/>
+                </a>
             </div>
         {% empty %}
-            Go to encodings and add a picture of yourself to discover all the photos of you in the index.
+            Go to 'my faces' and add a picture of yourself to discover all the
+            photos of you.
         {% endfor %}
     </div>
 {% endblock %}

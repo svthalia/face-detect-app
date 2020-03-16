@@ -1,23 +1,51 @@
 {% extends 'bootstrap4/bootstrap4.html' %}
-{% load bootstrap4 %}
+{% load bootstrap4 compress static %}
 
-{% block bootstrap4_title %}{% block title %}{% endblock %}{% endblock %}
+{% block bootstrap4_extra_head %}
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="theme-color" content="#000000"/>
+    <link rel="icon" href="{% static "img/icon.png" %}">
+
+    {% compress css %}
+        <link href="{% static "css/main.scss" %}" rel="stylesheet"
+              type="text/x-scss">
+    {% endcompress %}
+{% endblock %}
+
+{% block bootstrap4_title %}Study Association Thalia — {% block title %}{% endblock %}{% endblock %}
 
 {% block bootstrap4_content %}
-    <div class="container">
-        <h1 class="text-center my-4">{% block page_title %}{% endblock %}</h1>
+    <div id="page-content" class="container">
+        <div class="text-center my-4">
+            <img src="{% static "img/logo.png" %}"
+                 id="logo"
+                 alt="Study Association Thalia">
+        </div>
         {% block auth_info %}
             {% if request.user.is_authenticated %}
-                <p class="text-center">
-                    <a href="{% url 'index' %}">Photos of me</a> -
-                    <a href="{% url 'encodings:index' %}">Encodings</a> -
-                    <a href="{% url 'logout' %}">Logout</a>
-                </p>
+                <ul class="nav justify-content-center nav-pills">
+                    <li class="nav-item">
+                        {% url 'index' as index_url %}
+                        <a class="nav-link {% if index_url == request.path %}active{% endif %}" href="{{ index_url }}">Photos of you</a>
+                    </li>
+                    <li class="nav-item">
+                        {% url 'encodings:index' as encodings_url %}
+                        <a class="nav-link {% if encodings_url == request.path %}active{% endif %}" href="{{ encodings_url }}">My faces</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                    </li>
+                </ul>
             {% endif %}
         {% endblock %}
+        <section class="page-section">
+            <h1 class="text-center my-4 section-title">
+                {% block page_title %}{% endblock %}</h1>
 
-        {% autoescape off %}{% bootstrap_messages %}{% endautoescape %}
+            {% autoescape off %}{% bootstrap_messages %}{% endautoescape %}
 
-        {% block content %}(no content){% endblock %}
+            {% block content %}(no content){% endblock %}
+        </section>
     </div>
 {% endblock %}

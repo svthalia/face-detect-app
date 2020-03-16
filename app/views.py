@@ -1,5 +1,5 @@
 import requests
-from cachetools import TTLCache
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -12,6 +12,7 @@ from django.views import View
 from django.views.generic import ListView, DetailView, DeleteView, FormView, \
     TemplateView
 
+from app.cache import albums_cache
 from app.forms import UserEncodingCreateForm
 from app.models import Album, UserEncoding
 from face_detection.models import FaceEncoding
@@ -33,6 +34,7 @@ class TokenAuth(View):
         return redirect('index')
 
 
+@method_decorator(staff_member_required, 'dispatch')
 @method_decorator(login_required, 'dispatch')
 class AlbumsIndexView(ListView):
     template_name = 'app/albums/index.html'
@@ -41,9 +43,7 @@ class AlbumsIndexView(ListView):
     ordering = '-pk'
 
 
-albums_cache = TTLCache(maxsize=50, ttl=1800)
-
-
+@method_decorator(staff_member_required, 'dispatch')
 @method_decorator(login_required, 'dispatch')
 class AlbumsDetailView(DetailView):
     template_name = 'app/albums/detail.html'
@@ -109,7 +109,7 @@ class MyPhotosView(TemplateView):
                                 data['photos']):
                     photos.append(x)
 
-        context['title'] = 'Photos of me'
+        context['title'] = 'Photos of you'
         context['photos'] = photos
         return context
 
@@ -137,7 +137,8 @@ class UserEncodingCreateView(FormView):
         for encoding in encodings:
             UserEncoding.objects.create(
                 encoding=encoding,
-                user=self.request.user
+                description=form.cleaned_data.get('description', ''),
+                user=self.request.user,
             )
         return HttpResponseRedirect(self.get_success_url())
 

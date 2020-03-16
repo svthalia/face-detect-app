@@ -1,20 +1,33 @@
 {% extends 'app/base.html' %}
 {% load bootstrap4 %}
 
-{% block title %}Encodings{% endblock %}
+{% block title %}My faces{% endblock %}
 
 {% block content %}
-    <a href="{% url 'encodings:create' %}" class="btn btn-primary">Create new encoding</a>
+    <div class="row mb-4">
+        <p class="text-center">
+            This page is an overview of the face encodings used to find the
+            photos taken of you. You can add a new picture to extract the
+            information required to execute the face detection and remove the
+            data that you do not want to use anymore. Source images for the detection are never saved.
+        </p>
+        <a href="{% url 'encodings:create' %}"
+           class="btn btn-primary mx-auto">Add a new picture</a>
+    </div>
     <div class="row">
-        {% for encoding in encodings %}
-            <div class="col-12 my-1">
-                <form action="{% url 'encodings:delete' encoding.pk %}"
-                      method="post">
-                    {% csrf_token %}
-                    {{ encoding.pk }} - <input type="submit" value="Delete"
-                                               class="btn btn-danger"/>
-                </form>
-            </div>
-        {% endfor %}
+        <div class="col-lg-6 offset-lg-3">
+            {% for encoding in encodings %}
+                <div class="col-12 my-1 clearfix">
+                    <form action="{% url 'encodings:delete' encoding.pk %}"
+                          method="post">
+                        {% csrf_token %}
+                        <span class="align-middle">
+                        {{ forloop.counter }}: {{ encoding.description|default_if_none:'No description given' }}
+                            </span>
+                        <input type="submit" value="Delete" class="btn btn-danger float-right"/>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
     </div>
 {% endblock %}
