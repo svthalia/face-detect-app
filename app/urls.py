@@ -19,27 +19,41 @@ from django.urls import path, include
 from app import views
 
 urlpatterns = [
-    path('', views.MyPhotosView.as_view(), name='index'),
-    path('token-auth/', views.TokenAuth.as_view(), name='token-auth'),
-    path('admin/', admin.site.urls),
-    path('user/', include('django.contrib.auth.urls')),
-    path('albums/', include((
-        [
-            path('', views.AlbumsIndexView.as_view(),
-                 name='index'),
-            path('<int:pk>/',
-                 views.AlbumsDetailView.as_view(),
-                 name='detail'),
-        ], 'albums'
-    ), namespace='albums')),
-    path('encodings/', include((
-        [
-            path('', views.UserEncodingIndexView.as_view(),
-                 name='index'),
-            path('create/', views.UserEncodingCreateView.as_view(),
-                 name='create'),
-            path('delete/<int:pk>/', views.UserEncodingDeleteView.as_view(),
-                 name='delete')
-        ], 'encodings'
-    ), namespace='encodings'))
+    path("", views.MyPhotosView.as_view(), name="index"),
+    path("token-auth/", views.TokenAuth.as_view(), name="token-auth"),
+    path("admin/", admin.site.urls),
+    path("user/", include("django.contrib.auth.urls")),
+    path(
+        "albums/",
+        include(
+            (
+                [
+                    path("", views.AlbumsIndexView.as_view(), name="index"),
+                    path("<int:pk>/", views.AlbumsDetailView.as_view(), name="detail"),
+                ],
+                "albums",
+            ),
+            namespace="albums",
+        ),
+    ),
+    path(
+        "encodings/",
+        include(
+            (
+                [
+                    path("", views.UserEncodingIndexView.as_view(), name="index"),
+                    path(
+                        "create/", views.UserEncodingCreateView.as_view(), name="create"
+                    ),
+                    path(
+                        "delete/<int:pk>/",
+                        views.UserEncodingDeleteView.as_view(),
+                        name="delete",
+                    ),
+                ],
+                "encodings",
+            ),
+            namespace="encodings",
+        ),
+    ),
 ]

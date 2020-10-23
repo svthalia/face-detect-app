@@ -140,9 +140,8 @@ class FaceEncoding(Model):
     def encoding_to_model(image_id, album_id, encoding_array):
         encoding = FaceEncoding(image_id=image_id, album_id=album_id)
         for i in range(0, 128):
-            setattr(encoding, f'field{i}', encoding_array[i])
+            setattr(encoding, f"field{i}", encoding_array[i])
         return encoding
 
     def fields_to_encoding(self):
-        return np.array([getattr(self, f'field{i}') for i in range(0,  128)])
-
+        return np.array([getattr(self, f"field{i}") for i in range(0, 128)])
