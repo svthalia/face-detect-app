@@ -88,7 +88,7 @@ in
               ${pkgs.git}/bin/git clone https://github.com/${owner}/${repository}.git
             fi
             cd ${repositoryDirectory}
-            ${pkgs.git}/bin/git fetch https://github.com/${owner}/${repository}.git use-nix
+            ${pkgs.git}/bin/git fetch https://github.com/${owner}/${repository}.git master
             ${pkgs.git}/bin/git checkout FETCH_HEAD
             ${pkgs.nix}/bin/nix-build --attr ci.machine ${repositoryDirectory}
             ${pkgs.nix}/bin/nix-env --profile /nix/var/nix/profiles/system --set ${build}
