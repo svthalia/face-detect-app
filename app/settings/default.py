@@ -128,6 +128,8 @@ USE_TZ = True
 STATIC_ROOT = os.environ.get("STATIC_ROOT", "static")
 STATIC_URL = "/static/"
 
+MEDIA_ROOT = os.environ.get("MEDIA_ROOT")
+
 STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",

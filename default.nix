@@ -56,7 +56,7 @@ in
     inherit (pkgs) niv;
     inherit (pre-commit-hooks) pre-commit;
     inherit (pre-commit-hooks) nixpkgs-fmt;
-    inherit (face-detect-app) face-detect-app-env;
+    # inherit (face-detect-app) face-detect-app-env;
   };
 
   # to be built by github actions
@@ -69,7 +69,7 @@ in
         nix-linter.enable = true;
       };
       # generated files
-      excludes = [ "^nix/sources\.nix$" "^nixos/cachix\.nix" ];
+      excludes = [ "^nix/sources\.nix$" "^nixos/cachix*" ];
     };
     inherit src vm machine;
     inherit (face-detect-app) face-detect-app-env;
