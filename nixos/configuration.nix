@@ -21,6 +21,14 @@ in
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID+/7ktPyg4lYL0b6j3KQqfVE6rGLs5hNK3Q175th8cq jelle@foon"
       ];
     };
+    users.users.sebas = {
+      isNormalUser = true;
+      description = "Sébastiaan Versteeg";
+      extraGroups = [ "wheel" ];
+      openssh.authorizedKeys.keys = [
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHphCugRKsPI/YT53lO/7i7z6yP48kPjNltq5VFu/PbN Sebastiaan@Jupiter.local"
+      ];
+    };
 
     environment.systemPackages = [ face-detect-app.sudo-face-detect-app-manage ];
     # Make face-detect-app user
@@ -80,7 +88,7 @@ in
               ${pkgs.git}/bin/git clone https://github.com/${owner}/${repository}.git
             fi
             cd ${repositoryDirectory}
-            ${pkgs.git}/bin/git fetch https://github.com/${owner}/${repository}.git master
+            ${pkgs.git}/bin/git fetch https://github.com/${owner}/${repository}.git use-nix
             ${pkgs.git}/bin/git checkout FETCH_HEAD
             ${pkgs.nix}/bin/nix-build --attr machine ${repositoryDirectory}
             ${pkgs.nix}/bin/nix-env --profile /nix/var/nix/profiles/system --set ${build}
