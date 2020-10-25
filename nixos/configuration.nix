@@ -26,10 +26,10 @@ in
           if [ -f /run/face-detect-app.env ]; then
             source /run/face-detect-app.env
           else
-            export ALLOWED_HOSTS="${vars.domain}"
             export DJANGO_SECRET=$(hostid)
           fi
 
+          export ALLOWED_HOSTS="${vars.domain}"
           export STATIC_ROOT=${face-detect-app.face-detect-app-static}
           ${face-detect-app.face-detect-app-gunicorn}/bin/face-detect-app-gunicorn --bind 127.0.0.1:${toString vars.port}
         '';
@@ -89,8 +89,8 @@ in
 
         virtualHosts = {
           "${vars.domain}" = {
-            # enableACME = true;
-            # forceSSL = true;
+            enableACME = true;
+            forceSSL = true;
             locations."/".extraConfig = ''
               proxy_pass http://127.0.0.1:${toString vars.port};
             '';
