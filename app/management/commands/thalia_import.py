@@ -13,10 +13,10 @@ class Command(BaseCommand):
         parser.add_argument("token", type=str)
 
     def handle(self, *args, **options):
-        last_album = Album.objects.order_by("pk").first()
+        last_album = Album.objects.order_by("pk").last()
         if last_album:
             last_album.delete()
-            FaceEncoding.objects.filter(album_id=last_album.pk)
+            FaceEncoding.objects.filter(album_id=last_album.pk).delete()
 
         headers = {"Authorization": f'Token {options["token"]}'}
         albums = requests.get("https://thalia.nu/api/v1/photos/albums", headers=headers)
