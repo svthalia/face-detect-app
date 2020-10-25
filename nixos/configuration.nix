@@ -6,11 +6,14 @@ let
 
 in
 {
+  imports = [ ./cachix.nix ];
   config = {
     security.acme.email = "jelle@pingiun.com";
     security.acme.acceptTerms = true;
 
-    nix.gc.automatic = true;
+    nix = {
+      gc.automatic = true;
+    };
 
     security.sudo.wheelNeedsPassword = false;
     users.mutableUsers = false;

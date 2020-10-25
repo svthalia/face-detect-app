@@ -38,7 +38,7 @@ let
   machine = (
     import "${sources.nixpkgs}/nixos" {
       configuration = {
-        imports = [ ./nixos/configuration.nix ./nixos/cachix.nix "${sources.nixpkgs}/nixos/modules/virtualisation/amazon-image.nix" ];
+        imports = [ ./nixos/configuration.nix "${sources.nixpkgs}/nixos/modules/virtualisation/amazon-image.nix" ];
 
         networking.hostName = "face-detect-app";
         ec2.hvm = true;
