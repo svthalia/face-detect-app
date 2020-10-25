@@ -14,5 +14,13 @@ jobs:
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
         # Only needed for private caches
         #authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-    - run: nix-build
+    - run: nix-build -A ci
     - run: nix-shell --run "echo OK"
+    - name: Deploy if this is master
+      # if: github.ref == 'refs/heads/master'
+      run: |
+        echo $DEPLOY_SSH_KEY > ./deploykey
+        chmod 600 ./deploykey
+        machine=$(nix-build -A ci.machine)
+        nix-copy-closure --to deploy@throwback.thalia.nu $machine
+        ssh -i ./deploykey deploy@throwback.thalia.nu -- sudo $machine/bin/switch-to-configuration switch
