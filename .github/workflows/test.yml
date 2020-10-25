@@ -19,7 +19,7 @@ jobs:
     - name: Deploy if this is master
       # if: github.ref == 'refs/heads/master'
       run: |
-        echo $DEPLOY_SSH_KEY > ./deploykey
+        echo "$DEPLOY_SSH_KEY" > ./deploykey
         chmod 600 ./deploykey
         echo "throwback.thalia.nu,46.51.153.44,2a05:d018:436:bd00:f77b:b882:4b52:f4fd ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIC9wREr8e4OHw9Jtg4FjCBWDa3svY3BwRgOfpkNgPjkd" > ./known_hosts
         mkdir --mode 700 ~/.ssh
