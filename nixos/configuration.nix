@@ -90,7 +90,7 @@ in
             cd ${repositoryDirectory}
             ${pkgs.git}/bin/git fetch https://github.com/${owner}/${repository}.git use-nix
             ${pkgs.git}/bin/git checkout FETCH_HEAD
-            ${pkgs.nix}/bin/nix-build --attr machine ${repositoryDirectory}
+            ${pkgs.nix}/bin/nix-build --attr ci.machine ${repositoryDirectory}
             ${pkgs.nix}/bin/nix-env --profile /nix/var/nix/profiles/system --set ${build}
             ${pkgs.git}/bin/git gc --prune=all
             ${build}/bin/switch-to-configuration switch
