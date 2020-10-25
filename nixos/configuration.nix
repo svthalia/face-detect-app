@@ -10,6 +10,8 @@ in
     security.acme.email = "jelle@pingiun.com";
     security.acme.acceptTerms = true;
 
+    nix.gc.automatic = true;
+
     security.sudo.wheelNeedsPassword = false;
     users.mutableUsers = false;
     users.users.jelle = {
