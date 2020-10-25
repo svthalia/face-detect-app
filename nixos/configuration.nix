@@ -7,6 +7,21 @@ let
 in
 {
   config = {
+    security.acme.email = "jelle@pingiun.com";
+    security.acme.acceptTerms = true;
+
+    security.sudo.wheelNeedsPassword = false;
+    users.mutableUsers = false;
+    users.users.jelle = {
+      isNormalUser = true;
+      description = "Jelle Besseling";
+      extraGroups = [ "wheel" ];
+      openssh.authorizedKeys.keys = [
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICunYiTe1MOJsGC5OBn69bewMBS5bCCE1WayvM4DZLwE jelle@Jelles-Macbook-Pro.local"
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID+/7ktPyg4lYL0b6j3KQqfVE6rGLs5hNK3Q175th8cq jelle@foon"
+      ];
+    };
+
     environment.systemPackages = [ face-detect-app.sudo-face-detect-app-manage ];
     # Make face-detect-app user
     users.users.${vars.user} = { };
