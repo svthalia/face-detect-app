@@ -27,5 +27,5 @@ jobs:
         echo "UserKnownHostsFile $(pwd)/known_hosts" >> ~/.ssh/config
 
         machine=$(nix-build -A ci.machine)
-        nix-copy-closure --to deploy@throwback.thalia.nu $machine
+        nix copy --no-check-sigs --to deploy@throwback.thalia.nu $machine
         ssh deploy@throwback.thalia.nu -- sudo $machine/bin/switch-to-configuration switch
