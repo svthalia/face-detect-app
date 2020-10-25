@@ -1,5 +1,7 @@
 import os
 
+COMPRESS_OFFLINE = True
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",

@@ -38,10 +38,11 @@ let
   machine = (
     import "${sources.nixpkgs}/nixos" {
       configuration = {
-        imports = [ ./nixos/configuration.nix "${sources.nixpkgs}/nixos/modules/virtualisation/amazon-image.nix" ];
+        imports = [ ./nixos/configuration.nix ./nixos/cachix.nix "${sources.nixpkgs}/nixos/modules/virtualisation/amazon-image.nix" ];
 
         networking.hostName = "face-detect-app";
         ec2.hvm = true;
+        swapDevices = [{ device = "/dev/xvdb"; }];
       };
       system = "x86_64-linux";
     }
@@ -68,7 +69,7 @@ in
         nix-linter.enable = true;
       };
       # generated files
-      excludes = [ "^nix/sources\.nix$" ];
+      excludes = [ "^nix/sources\.nix$" "^nixos/cachix\.nix" ];
     };
     inherit src vm machine;
     inherit (face-detect-app) face-detect-app-env;
