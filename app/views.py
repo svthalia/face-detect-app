@@ -92,8 +92,10 @@ class MyPhotosView(TemplateView):
                 distance_function = distance_function[0:-2] + "),"
             distance_function = distance_function[0:-1] + ")"
 
-            data_obj = FaceEncoding.objects.exclude(album_id=None).extra(
-                where=[f"{distance_function} < 0.49"]
+            data_obj = (
+                FaceEncoding.objects.exclude(album_id=None)
+                .order_by("-album_id")
+                .extra(where=[f"{distance_function} < 0.49"])
             )
 
             for encoding in data_obj:

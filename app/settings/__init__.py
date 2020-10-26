@@ -7,4 +7,4 @@ if environment == "AWS_EB":
 elif environment == "DOCKER_COMPOSE":
     from .docker_compose import *
 elif environment == "NIX":
-	from .nix import *
+    from .nix import *
