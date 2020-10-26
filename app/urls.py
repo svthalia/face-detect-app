@@ -56,4 +56,5 @@ urlpatterns = [
             namespace="encodings",
         ),
     ),
+    path("random/", views.RandomAlbumView.as_view(), name="random-album"),
 ]

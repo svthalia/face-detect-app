@@ -153,3 +153,25 @@ class UserEncodingDeleteView(DeleteView):
     template_name = "app/encodings/delete.html"
     model = UserEncoding
     success_url = reverse_lazy("encodings:index")
+
+
+@method_decorator(login_required, "dispatch")
+class RandomAlbumView(DetailView):
+    template_name = "app/myphotos.html"
+    model = Album
+
+    def get_object(self, queryset=None):
+        return Album.objects.order_by("?")[0]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        data = requests.get(
+            f'https://thalia.nu/api/v1/photos/albums/{context["album"].pk}',
+            headers={"Authorization": f'Token {self.request.session["token"]}'},
+        ).json()
+
+        context["title"] = f"{data['title']} ({data['date']})"
+        context["photos"] = data["photos"]
+
+        return context
