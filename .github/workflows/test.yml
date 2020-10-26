@@ -1,0 +1,30 @@
+name: "Test"
+on:
+  push:
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2.3.3
+    - uses: cachix/install-nix-action@v11
+    - uses: cachix/cachix-action@v6
+      with:
+        name: face-detect-app
+        signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
+        # Only needed for private caches
+        #authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+    - run: nix-build -A ci
+    - run: nix-shell --run "echo OK"
+    - name: Deploy if this is master
+      if: github.ref == 'refs/heads/master'
+      run: |
+        echo "${{ secrets.DEPLOY_SSH_KEY }}" > ./deploykey
+        chmod 600 ./deploykey
+        echo "throwback.thalia.nu,46.51.153.44,2a05:d018:436:bd00:f77b:b882:4b52:f4fd ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIC9wREr8e4OHw9Jtg4FjCBWDa3svY3BwRgOfpkNgPjkd" > ./known_hosts
+        mkdir --mode 700 ~/.ssh
+        echo "IdentityFile $(pwd)/deploykey" >> ~/.ssh/config
+        echo "UserKnownHostsFile $(pwd)/known_hosts" >> ~/.ssh/config
+
+        machine=$(nix-build -A ci.machine)
+        nix copy --no-check-sigs --to ssh://deploy@throwback.thalia.nu $machine
+        ssh deploy@throwback.thalia.nu -- sudo $machine/bin/switch-to-configuration switch

@@ -1,4 +1,4 @@
-{ _config, pkgs, ... }:
+{ _config, _pkgs, ... }:
 let
   vars = import ../vars.nix;
 
@@ -6,9 +6,15 @@ let
 
 in
 {
+  imports = [ ./cachix.nix ];
   config = {
     security.acme.email = "jelle@pingiun.com";
     security.acme.acceptTerms = true;
+
+    nix = {
+      gc.automatic = true;
+      trustedUsers = [ "root" "deploy" ];
+    };
 
     security.sudo.wheelNeedsPassword = false;
     users.mutableUsers = false;
@@ -27,6 +33,14 @@ in
       extraGroups = [ "wheel" ];
       openssh.authorizedKeys.keys = [
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHphCugRKsPI/YT53lO/7i7z6yP48kPjNltq5VFu/PbN Sebastiaan@Jupiter.local"
+      ];
+    };
+    users.users.deploy = {
+      isNormalUser = true;
+      description = "Deploy user";
+      extraGroups = [ "wheel" ];
+      openssh.authorizedKeys.keys = [
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJIk0EpjiVLQrL4gHAUl7YrvQZrjbycb+BIYyVp7A81O deploykey"
       ];
     };
 
@@ -57,45 +71,6 @@ in
           ${face-detect-app.face-detect-app-gunicorn}/bin/face-detect-app-gunicorn --bind 127.0.0.1:${toString vars.port}
         '';
       };
-      self-deploy =
-        let
-          workingDirectory = "/var/lib/self-deploy";
-
-          owner = "svthalia";
-
-          repository = "face-detect-app";
-
-          repositoryDirectory = "${workingDirectory}/${repository}";
-
-          build = "${repositoryDirectory}/result";
-
-        in
-        {
-          wantedBy = [ "multi-user.target" ];
-
-          after = [ "network-online.target" ];
-
-          path = [ pkgs.gnutar pkgs.gzip ];
-
-          serviceConfig.X-RestartIfChanged = false;
-
-          script = ''
-            if [ ! -e ${workingDirectory} ]; then
-              ${pkgs.coreutils}/bin/mkdir --parents ${workingDirectory}
-            fi
-            if [ ! -e ${repositoryDirectory} ]; then
-              cd ${workingDirectory}
-              ${pkgs.git}/bin/git clone https://github.com/${owner}/${repository}.git
-            fi
-            cd ${repositoryDirectory}
-            ${pkgs.git}/bin/git fetch https://github.com/${owner}/${repository}.git master
-            ${pkgs.git}/bin/git checkout FETCH_HEAD
-            ${pkgs.nix}/bin/nix-build --attr ci.machine ${repositoryDirectory}
-            ${pkgs.nix}/bin/nix-env --profile /nix/var/nix/profiles/system --set ${build}
-            ${pkgs.git}/bin/git gc --prune=all
-            ${build}/bin/switch-to-configuration switch
-          '';
-        };
     };
 
     services = {
