@@ -1,11 +1,15 @@
 {% extends 'app/base.html' %}
-{% load bootstrap4 %}
+{% load bootstrap4 static %}
 
 {% block title %}Add a new picture{% endblock %}
 
 {% block content %}
     <div class="row">
-        <div class="col-lg-6 offset-lg-3">
+        <div class="col-lg-6 mb-4 mb-lg-0 text-center">
+            <img src="{% static 'img/example.png' %}" />
+        </div>
+        <div class="col-lg-6">
+            <p>Upload a portrait photo of yourself with good lighting for the best results.</p>
             <form action="" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {% bootstrap_form form %}
