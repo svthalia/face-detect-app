@@ -13,6 +13,7 @@ in
 
     nix = {
       gc.automatic = true;
+      trustedUsers = [ "root" "deploy" ];
     };
 
     security.sudo.wheelNeedsPassword = false;
