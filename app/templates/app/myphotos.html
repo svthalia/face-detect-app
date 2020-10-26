@@ -26,8 +26,20 @@
                 </a>
             </div>
         {% empty %}
-            Go to 'my faces' and add a picture of yourself to discover all the
-            photos of you.
+        <div class="text-center mx-auto col-md-7">
+            <p>
+                It looks like this is your first time here! Welcome to the Thalia Throwback Machine!
+            </p>
+            <p>
+                This website will allow you to look back at photos taken of you (or others) in the
+                past years.<br />The Paparazcie made sure we have quite the archive available!
+            </p>
+            <p>
+                To get started you have to add a picture of yourself so that we know what to look for.
+            </p>
+            <a href="{% url 'encodings:create' %}"
+               class="btn btn-success mx-auto">Add a new picture</a>
+        </div>
         {% endfor %}
     </div>
 {% endblock %}
