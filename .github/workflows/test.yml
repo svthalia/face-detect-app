@@ -17,7 +17,7 @@ jobs:
     - run: nix-build -A ci
     - run: nix-shell --run "echo OK"
     - name: Deploy if this is master
-      # if: github.ref == 'refs/heads/master'
+      if: github.ref == 'refs/heads/master'
       run: |
         echo "${{ secrets.DEPLOY_SSH_KEY }}" > ./deploykey
         chmod 600 ./deploykey
