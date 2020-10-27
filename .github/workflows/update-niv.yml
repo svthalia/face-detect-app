@@ -29,3 +29,4 @@ jobs:
         title: "[automation] update niv dependencies"
         branch: "automation/update-niv-dependencies"
         labels: "automerge"
+        author: "GitHub <noreply@github.com>"
