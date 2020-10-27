@@ -1,0 +1,14 @@
+{
+  "extends": [
+    "config:base"
+  ],
+  "schedule": [
+      "before 8am on the first day of the month"
+  ],
+  "poetry": {
+    "enabled": true
+  },
+  "docker": {
+    "enabled": false
+  }
+}
