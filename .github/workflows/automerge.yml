@@ -23,12 +23,13 @@ on:
       - ready_for_review
 
 jobs:
-  if: github.event.review.state == 'approved' || !github.event.review
+  automerge:
+    if: github.event.review.state == 'approved' || !github.event.review
     runs-on: ubuntu-latest
     steps:
       - uses: reitermarkus/automerge@v1
         with:
-          token: ${{ secrets.MY_GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           merge-method: rebase
           do-not-merge-labels: never-merge
           required-labels: automerge
