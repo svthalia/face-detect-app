@@ -70,8 +70,6 @@ class AlbumsDetailView(DetailView):
 
 @method_decorator(login_required, "dispatch")
 class RandomAlbumView(View):
-    template_name = "app/myphotos.html"
-    model = Album
 
     def dispatch(self, request, *args, **kwargs):
         album = Album.objects.order_by("?").first()
