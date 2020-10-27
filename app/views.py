@@ -47,7 +47,6 @@ class AlbumsIndexView(ListView):
     ordering = "-pk"
 
 
-@method_decorator(staff_member_required, "dispatch")
 @method_decorator(login_required, "dispatch")
 class AlbumsDetailView(DetailView):
     template_name = "app/albums/detail.html"
@@ -66,6 +65,16 @@ class AlbumsDetailView(DetailView):
         context["photos"] = data["photos"]
 
         return context
+
+
+@method_decorator(login_required, "dispatch")
+class RandomAlbumView(View):
+    template_name = "app/myphotos.html"
+    model = Album
+
+    def dispatch(self, request, *args, **kwargs):
+        album = Album.objects.order_by("?").first()
+        return redirect('albums:detail', pk=album.pk)
 
 
 @method_decorator(login_required, "dispatch")

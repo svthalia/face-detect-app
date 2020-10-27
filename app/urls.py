@@ -30,6 +30,7 @@ urlpatterns = [
                 [
                     path("", views.AlbumsIndexView.as_view(), name="index"),
                     path("<int:pk>/", views.AlbumsDetailView.as_view(), name="detail"),
+                    path("random/", views.RandomAlbumView.as_view(), name="random"),
                 ],
                 "albums",
             ),
