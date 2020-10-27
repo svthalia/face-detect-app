@@ -5,7 +5,8 @@ on:
 
   workflow_run:
     workflows:
-      - test
+      - "Test"
+      - "Update niv"
     types:
       - completed
 
