@@ -62,6 +62,7 @@ class AlbumsDetailView(DetailView):
         ).json()
 
         context["title"] = data["title"]
+        context["date"] = data["date"]
         context["photos"] = data["photos"]
 
         return context
