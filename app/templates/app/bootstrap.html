@@ -34,8 +34,7 @@
                         <a class="nav-link {% if encodings_url == request.path %}active{% endif %}" href="{{ encodings_url }}">My faces</a>
                     </li>
                     <li class="nav-item">
-                        {% url 'random-album' as randomalbum_url %}
-                        <a class="nav-link {% if randomalbum_url == request.path %}active{% endif %}" href="{{ randomalbum_url }}">Random album</a>
+                        <a class="nav-link href="{% url 'album:random-album' %}">Random album</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'logout' %}">Logout</a>
