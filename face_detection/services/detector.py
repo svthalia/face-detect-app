@@ -1,4 +1,6 @@
 import face_recognition
+import numpy as np
+from PIL import Image
 
 from face_detection.models import FaceEncoding
 
@@ -12,8 +14,10 @@ def obtain_encodings(image_id, album_id, image_file):
 
 
 def _get_encodings(image_file):
-    img = face_recognition.load_image_file(image_file)
-    return face_recognition.face_encodings(img)
+    img = Image.open(image_file)
+    img = img.convert('RGB')
+    img.thumbnail((500, 500))
+    return face_recognition.face_encodings(np.array(img))
 
 
 def _save_encoding(image_id, album_id, encoding):
