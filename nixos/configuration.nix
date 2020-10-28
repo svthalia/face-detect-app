@@ -52,8 +52,8 @@ in
       face-detect-app-dir = {
         wantedBy = [ "multi-user.target" ];
         script = ''
-          mkdir --parents /var/lib/face-detect-app/media
-          chown --recursive ${vars.user} /var/lib/face-detect-app/
+          mkdir --parents ${vars.rootDir}/media
+          chown --recursive ${vars.user} ${vars.rootDir}
         '';
       };
       face-detect-app = {
@@ -67,8 +67,8 @@ in
         };
 
         script = ''
-          if [ -f /run/face-detect-app.env ]; then
-            source /run/face-detect-app.env
+          if [ -f ${vars.envFile} ]; then
+            source ${vars.envFile}
           else
             echo "Make sure to set a secret key!" >&2
             export DJANGO_SECRET=$(hostid)
@@ -76,7 +76,7 @@ in
 
           export DJANGO_ALLOWED_HOSTS="${vars.domain}"
           export STATIC_ROOT=${face-detect-app.face-detect-app-static}
-          export MEDIA_ROOT=/var/lib/face-detect-app/media
+          export MEDIA_ROOT=${vars.rootDir}/media
           ${face-detect-app.face-detect-app-gunicorn}/bin/face-detect-app-gunicorn --bind 127.0.0.1:${toString vars.port}
         '';
       };
