@@ -1,10 +1,10 @@
+from concurrent.futures.thread import ThreadPoolExecutor
+
 import requests
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.db import connection
-from django.db.models import Q
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseForbidden
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
@@ -87,21 +87,25 @@ class MyPhotosView(TemplateView):
         encodings = FaceEncoding.objects.order_by("-album_id").filter(
             matches__user=self.request.user
         )
+        albums = {x.album_id for x in encodings if x.album_id not in albums_cache}
 
         if encodings.exists():
             s = requests.Session()
             s.headers.update(
                 {"Authorization": f'Token {self.request.session["token"]}'}
             )
-            for encoding in encodings:
-                if encoding.album_id in albums_cache:
-                    data = albums_cache[encoding.album_id]
-                else:
-                    data = s.get(
-                        f"https://thalia.nu/api/v1/photos/albums/"
-                        f"{encoding.album_id}/"
+
+            def get_url(album_id):
+                if album_id not in albums_cache:
+                    albums_cache[album_id] = s.get(
+                        f"https://thalia.nu/api/v1/photos/albums/{album_id}/"
                     ).json()
-                    albums_cache[encoding.album_id] = data
+
+            with ThreadPoolExecutor(max_workers=20) as pool:
+                pool.map(get_url, albums)
+
+            for encoding in encodings:
+                data = albums_cache[encoding.album_id]
                 for x in filter(lambda x: x["pk"] == encoding.image_id, data["photos"]):
                     photos.append(x)
             s.close()
