@@ -4,6 +4,7 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db import connection
+from django.db.models import Q
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseForbidden
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
@@ -82,30 +83,11 @@ class MyPhotosView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        user_encodings = UserEncoding.objects.filter(user=self.request.user)
         photos = []
+        encodings = FaceEncoding.objects.filter(matches__user=self.request.user)
 
-        if user_encodings.exists():
-            func = "least"
-            if connection.vendor == "sqlite":
-                func = "min"
-
-            distance_function = f"{func}(1,"
-            for user_encoding in user_encodings:
-                encoding = user_encoding.encoding.fields_to_encoding()
-                distance_function += "sqrt("
-                for i in range(0, 128):
-                    distance_function += f"power(field{i} - {encoding[i]}, 2) + "
-                distance_function = distance_function[0:-2] + "),"
-            distance_function = distance_function[0:-1] + ")"
-
-            data_obj = (
-                FaceEncoding.objects.exclude(album_id=None)
-                .order_by("-album_id")
-                .extra(where=[f"{distance_function} < 0.49"])
-            )
-
-            for encoding in data_obj:
+        if encodings.exists():
+            for encoding in encodings:
                 if encoding.album_id in albums_cache:
                     data = albums_cache[encoding.album_id]
                 else:
@@ -147,11 +129,12 @@ class UserEncodingCreateView(FormView):
         )
 
         for encoding in encodings:
-            UserEncoding.objects.create(
+            user_enc = UserEncoding.objects.create(
                 encoding=encoding,
                 description=form.cleaned_data.get("description", ""),
                 user=self.request.user,
             )
+            user_enc.calculate_matches()
         return HttpResponseRedirect(self.get_success_url())
 
 

@@ -10,6 +10,6 @@ class Command(BaseCommand):
         parser.add_argument("image_location", type=str)
 
     def handle(self, *args, **options):
-        print("hallo")
-        detector.obtain_encodings(1, options["image_location"])
-        print("test")
+        print("Importing")
+        detector.obtain_encodings(1, 1, options["image_location"])
+        print("Done")
