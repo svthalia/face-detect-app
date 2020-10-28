@@ -84,7 +84,7 @@ class MyPhotosView(TemplateView):
         context = super().get_context_data(**kwargs)
 
         photos = []
-        encodings = FaceEncoding.objects.filter(matches__user=self.request.user)
+        encodings = FaceEncoding.objects.order_by("-album_id").filter(matches__user=self.request.user)
 
         if encodings.exists():
             for encoding in encodings:
