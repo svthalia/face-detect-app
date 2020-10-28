@@ -50,7 +50,7 @@ in
 
     systemd.services = {
       face-detect-app = {
-        after = [ "networkig.target" "postgresql.service" ];
+        after = [ "networking.target" "postgresql.service" ];
         partOf = [ "face-detect-app-env.service" ];
         wantedBy = [ "multi-user.target" ];
 
@@ -66,7 +66,7 @@ in
             export DJANGO_SECRET=$(hostid)
           fi
 
-          export ALLOWED_HOSTS="${vars.domain}"
+          export DJANGO_ALLOWED_HOSTS="${vars.domain}"
           export STATIC_ROOT=${face-detect-app.face-detect-app-static}
           ${face-detect-app.face-detect-app-gunicorn}/bin/face-detect-app-gunicorn --bind 127.0.0.1:${toString vars.port}
         '';
