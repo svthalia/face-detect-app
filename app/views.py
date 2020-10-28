@@ -89,20 +89,22 @@ class MyPhotosView(TemplateView):
         )
 
         if encodings.exists():
+            s = requests.Session()
+            s.headers.update(
+                {"Authorization": f'Token {self.request.session["token"]}'}
+            )
             for encoding in encodings:
                 if encoding.album_id in albums_cache:
                     data = albums_cache[encoding.album_id]
                 else:
-                    data = requests.get(
+                    data = s.get(
                         f"https://thalia.nu/api/v1/photos/albums/"
-                        f"{encoding.album_id}/",
-                        headers={
-                            "Authorization": f'Token {self.request.session["token"]}'
-                        },
+                        f"{encoding.album_id}/"
                     ).json()
                     albums_cache[encoding.album_id] = data
                 for x in filter(lambda x: x["pk"] == encoding.image_id, data["photos"]):
                     photos.append(x)
+            s.close()
 
         context["title"] = "Photos of you"
         context["photos"] = photos
