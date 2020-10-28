@@ -57,4 +57,5 @@ urlpatterns = [
             namespace="encodings",
         ),
     ),
+    path("crash/", views.TestCrashView.as_view(), name="crash"),
 ]

@@ -4,7 +4,7 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db import connection
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse, HttpResponseForbidden
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
@@ -70,10 +70,9 @@ class AlbumsDetailView(DetailView):
 
 @method_decorator(login_required, "dispatch")
 class RandomAlbumView(View):
-
     def dispatch(self, request, *args, **kwargs):
         album = Album.objects.order_by("?").first()
-        return redirect('albums:detail', pk=album.pk)
+        return redirect("albums:detail", pk=album.pk)
 
 
 @method_decorator(login_required, "dispatch")
@@ -161,3 +160,13 @@ class UserEncodingDeleteView(DeleteView):
     template_name = "app/encodings/delete.html"
     model = UserEncoding
     success_url = reverse_lazy("encodings:index")
+
+
+@method_decorator(staff_member_required, "dispatch")
+class TestCrashView(View):
+    """Test view to intentionally crash to test the error handling."""
+
+    def dispatch(self, request, *args, **kwargs) -> HttpResponse:
+        if not request.user.is_superuser:
+            return HttpResponseForbidden("This is not for you")
+        raise Exception("Test exception")
