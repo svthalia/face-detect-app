@@ -23,9 +23,11 @@ class UserEncoding(Model):
         distance_function = distance_function[0:-2] + "),"
         distance_function = distance_function[0:-1]
 
-        matches = (FaceEncoding.objects.exclude(album_id=None)
+        matches = (
+            FaceEncoding.objects.exclude(album_id=None)
             .order_by("-album_id")
-            .extra(where=[f"{distance_function} < 0.49"]))
+            .extra(where=[f"{distance_function} < 0.49"])
+        )
 
         for match in matches:
             self.matches.add(match)

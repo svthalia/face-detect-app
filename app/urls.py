@@ -59,5 +59,5 @@ urlpatterns = [
         ),
     ),
     path("crash/", views.TestCrashView.as_view(), name="crash"),
-    path('__debug__/', include(debug_toolbar.urls)),
+    path("__debug__/", include(debug_toolbar.urls)),
 ]
