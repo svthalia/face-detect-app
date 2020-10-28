@@ -49,8 +49,15 @@ in
     users.users.${vars.user} = { };
 
     systemd.services = {
+      face-detect-app-dir = {
+        wantedBy = [ "multi-user.target" ];
+        script = ''
+          mkdir --parents /var/lib/face-detect-app/media
+          chown --recursive ${vars.user} /var/lib/face-detect-app/
+        '';
+      };
       face-detect-app = {
-        after = [ "networking.target" "postgresql.service" ];
+        after = [ "networking.target" "postgresql.service" "face-detect-app-dir.service" ];
         partOf = [ "face-detect-app-env.service" ];
         wantedBy = [ "multi-user.target" ];
 
@@ -63,11 +70,13 @@ in
           if [ -f /run/face-detect-app.env ]; then
             source /run/face-detect-app.env
           else
+            echo "Make sure to set a secret key!" >&2
             export DJANGO_SECRET=$(hostid)
           fi
 
           export DJANGO_ALLOWED_HOSTS="${vars.domain}"
           export STATIC_ROOT=${face-detect-app.face-detect-app-static}
+          export MEDIA_ROOT=/var/lib/face-detect-app/media
           ${face-detect-app.face-detect-app-gunicorn}/bin/face-detect-app-gunicorn --bind 127.0.0.1:${toString vars.port}
         '';
       };
@@ -89,9 +98,13 @@ in
           "${vars.domain}" = {
             enableACME = true;
             forceSSL = true;
-            locations."/".extraConfig = ''
-              proxy_pass http://127.0.0.1:${toString vars.port};
-            '';
+            locations."/" = {
+              proxyPass = "http://127.0.0.1:${toString vars.port}";
+              extraConfig = ''
+                proxy_set_header Host            $host;
+                proxy_set_header X-Forwarded-For $remote_addr;
+              '';
+            };
             locations."/static/".alias = "${face-detect-app.face-detect-app-static}/";
           };
         };
