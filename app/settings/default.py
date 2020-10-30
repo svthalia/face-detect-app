@@ -24,6 +24,7 @@ BASE_DIR = os.path.abspath(
 AUTHENTICATION_BACKENDS = ["app.backends.concrexit.ConcrexitBackend"]
 LOGIN_URL = "/user/login/"
 LOGIN_REDIRECT_URL = "/"
+BASE_HOST = os.environ.get("BASE_HOST", "https://thalia.nu")  # Should NOT end with /
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/

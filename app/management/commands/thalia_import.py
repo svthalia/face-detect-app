@@ -1,4 +1,5 @@
 import requests
+from django.conf import settings
 from django.core.management import BaseCommand
 
 from app.models import Album
@@ -19,7 +20,7 @@ class Command(BaseCommand):
             FaceEncoding.objects.filter(album_id=last_album.pk).delete()
 
         headers = {"Authorization": f'Token {options["token"]}'}
-        albums = requests.get("https://thalia.nu/api/v1/photos/albums", headers=headers)
+        albums = requests.get(f"{settings.BASE_HOST}/api/v1/photos/albums", headers=headers)
 
         for album in albums.json():
             if Album.objects.filter(pk=album["pk"]).exists():
@@ -30,7 +31,8 @@ class Command(BaseCommand):
             self.stdout.write(f'Working on {album["pk"]} {album["title"]}')
 
             album = requests.get(
-                f'https://thalia.nu/api/v1/photos/albums/{album["pk"]}', headers=headers
+                f'{settings.BASE_HOST}/api/v1/photos/albums/{album["pk"]}',
+                headers=headers
             ).json()
 
             for photo in album["photos"]:

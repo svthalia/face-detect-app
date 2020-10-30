@@ -22,6 +22,8 @@
             <div class="col-3 my-2 photo-card">
                 <a href="{{ photo.file.full }}" target="_blank"
                    data-rotation="{{ photo.rotation }}"
+                   data-caption="{{ photo.album_name }}"
+                   data-download="{{ photo.download }}"
                    data-fancybox="gallery">
                     <img class="w-100" src="{{ photo.file.medium }}"/>
                 </a>

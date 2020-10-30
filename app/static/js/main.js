@@ -17,9 +17,15 @@ $(function () {
             $(instance.$refs.container)
               .find("[data-fancybox-download]")
               .attr("href", current.opts.download);
-            $(instance.$refs.container)
-              .find("[data-fancybox-album]")
-              .attr("href", current.opts.album);
+            if (current.opts.album) {
+                $(instance.$refs.container)
+                    .find("[data-fancybox-album]")
+                    .attr("href", current.opts.album);
+            } else {
+                $(instance.$refs.container)
+                    .find("[data-fancybox-album]")
+                    .remove();
+            }
         }
     });
 });

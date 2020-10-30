@@ -3,6 +3,7 @@ from concurrent.futures.thread import ThreadPoolExecutor
 from urllib.parse import urlparse
 
 import requests
+from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
@@ -31,7 +32,7 @@ class TokenAuth(View):
     def get(self, request, *args, **kwargs):
         if "token" in request.GET:
             response = requests.get(
-                f"https://thalia.nu/api/v1/members/me",
+                f"{settings.BASE_HOST}/api/v1/members/me",
                 headers={"Authorization": f'Token {request.GET["token"]}'},
             ).json()
             user = User.objects.get(pk=response["pk"])
@@ -60,9 +61,17 @@ class AlbumsDetailView(DetailView):
         context = super().get_context_data(**kwargs)
 
         data = requests.get(
-            f'https://thalia.nu/api/v1/photos/albums/{context["album"].pk}',
+            f'{settings.BASE_HOST}/api/v1/photos/albums/{context["album"].pk}',
             headers={"Authorization": f'Token {self.request.session["token"]}'},
         ).json()
+
+        for photo in data["photos"]:
+            parsed = urlparse(photo['file']['full'])
+            split = os.path.split(parsed.path)
+            photo.update({
+                'album_name': f"{data['title']} {data['date']}",
+                'download': f"{parsed.scheme}://{parsed.hostname}{split[0].replace('media/private', 'members')}/download/{split[1]}"
+            })
 
         context["title"] = data["title"]
         context["date"] = data["date"]
@@ -100,7 +109,7 @@ class MyPhotosView(TemplateView):
             def get_url(album_id):
                 if album_id not in albums_cache:
                     albums_cache[album_id] = s.get(
-                        f"https://thalia.nu/api/v1/photos/albums/{album_id}/"
+                        f"{settings.BASE_HOST}/api/v1/photos/albums/{album_id}/"
                     ).json()
 
             with ThreadPoolExecutor(max_workers=20) as pool:
