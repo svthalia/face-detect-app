@@ -1,4 +1,6 @@
+import os
 from concurrent.futures.thread import ThreadPoolExecutor
+from urllib.parse import urlparse
 
 import requests
 from django.contrib.admin.views.decorators import staff_member_required
@@ -103,10 +105,15 @@ class MyPhotosView(TemplateView):
 
             with ThreadPoolExecutor(max_workers=20) as pool:
                 pool.map(get_url, albums)
-
             for encoding in encodings:
                 data = albums_cache[encoding.album_id]
                 for x in filter(lambda x: x["pk"] == encoding.image_id, data["photos"]):
+                    parsed = urlparse(x['file']['full'])
+                    split = os.path.split(parsed.path)
+                    x.update({
+                        'album_name': f"{data['title']} {data['date']}",
+                        'download': f"{parsed.scheme}://{parsed.hostname}{split[0].replace('media/private', 'members')}/download/{split[1]}"
+                    })
                     photos.append(x)
             s.close()
 
