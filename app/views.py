@@ -94,7 +94,7 @@ class MyPhotosView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        photos = []
+        photos = {}
         encodings = FaceEncoding.objects.order_by("-album_id").filter(
             matches__user=self.request.user
         )
@@ -123,11 +123,11 @@ class MyPhotosView(TemplateView):
                         'album_name': f"{data['title']} {data['date']}",
                         'download': f"{parsed.scheme}://{parsed.hostname}{split[0].replace('media/private', 'members')}/download/{split[1]}"
                     })
-                    photos.append(x)
+                    photos[f"{x['album']}-{x['pk']}"] = x
             s.close()
 
         context["title"] = "Photos of you"
-        context["photos"] = photos
+        context["photos"] = photos.values()
         return context
 
 
