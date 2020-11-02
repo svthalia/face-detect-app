@@ -12,6 +12,7 @@ let
 
   face-detect-app = import ./nix/face-detect-app.nix { };
 
+  # A VM that can be used for testing the NixOS configuration
   vm = (
     import "${sources.nixpkgs}/nixos" {
       configuration = {
@@ -35,6 +36,7 @@ let
     }
   ).vm;
 
+  # The NixOS configuration that reflects the EC2 instance we run on
   machine = (
     import "${sources.nixpkgs}/nixos" {
       configuration = {
