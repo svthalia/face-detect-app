@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 
 class ConcrexitBackend(BaseBackend):
     def authenticate(self, request, username=None, password=None):
+        username = username.lower() if username else username
         auth_response = requests.post(
             f"{settings.BASE_HOST}/api/v1/token-auth/",
             json={"username": username, "password": password},
