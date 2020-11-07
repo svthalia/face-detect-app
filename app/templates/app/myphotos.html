@@ -49,7 +49,7 @@
     <div class="row mx-4 mt-4 pt-4">
         <h5>Download all the photos in your terminal:</h5>
         <pre class="text-muted pre-scrollable"><code>
-{% for photo in photos %}curl {{ photo.file.full }} -o {{ photo.album_name|slugify }}-{{ photo.pk }}.jpg
+{% for photo in photos %}curl "{{ photo.file.full }}" -o "{{ photo.album_name|slugify }}-{{ photo.pk }}.jpg"
 {% endfor %}</code></pre>
     </div>
     {% endif %}
