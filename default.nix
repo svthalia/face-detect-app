@@ -58,7 +58,7 @@ in
     inherit (pkgs) niv;
     inherit (pre-commit-hooks) pre-commit;
     inherit (pre-commit-hooks) nixpkgs-fmt;
-    # inherit (face-detect-app) face-detect-app-env;
+    inherit (face-detect-app) face-detect-app-env;
   };
 
   # to be built by github actions

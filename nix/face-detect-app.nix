@@ -16,8 +16,13 @@ let
   vars = import ../vars.nix;
 
   # We need to override some things because poetry2nix doesn't have the required overrides
-  # for Pillow. For dlib and numpy we use the packages provided by nixpkgs, because it was
+  # for Pillow. For numpy we use the packages provided by nixpkgs, because it was
   # too hard to get the fixes, and the exact version shouldn't be super important.
+  # For dlib we reset the allowed platforms because it builds on macos just fine
+  mydlib = with pkgs; dlib.overrideAttrs (_oldAttrs: {
+    meta.platform = [ ];
+  });
+
   face-detect-app-env = poetry2nix.mkPoetryEnv {
     projectDir = src;
     overrides = poetry2nix.overrides.withDefaults (
@@ -54,7 +59,7 @@ let
             buildInputs = [ freetype libjpeg openjpeg zlib libtiff libwebp tcl lcms2 ] ++ old.buildInputs;
           }
         );
-        dlib = pkgs.python38Packages.dlib;
+        dlib = pkgs.python38Packages.dlib.override { dlib = mydlib; };
         numpy = pkgs.python38Packages.numpy;
       }
     );
