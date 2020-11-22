@@ -3,12 +3,21 @@
     "config:base"
   ],
   "schedule": [
-      "before 8am on the first day of the month"
+      "before 8am every Monday"
   ],
   "poetry": {
     "enabled": true
   },
   "docker": {
     "enabled": false
-  }
+  },
+  "github-actions": {
+    "enabled": true
+  },
+  "packageRules": [
+    {
+      "updateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true
+    }
+  ]
 }
