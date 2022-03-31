@@ -6,7 +6,7 @@ authors = ["Sébastiaan <se_bastiaan@outlook.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.7"
-django = "^3.0.4"
+django = "^4.0.0"
 face_recognition = "^1.2.3"
 django-bootstrap4 = "^2.0.0"
 requests = "<2.26"
