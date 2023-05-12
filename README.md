@@ -1,3 +1,5 @@
+> face-detect-app was a temporary website where Thalia's members could try out face detection as part of the lustrum. It is superseded now by the facedetection app in [concrexit](https://github.com/svthalia/concrexit).
+
 # Deploying
 
 1. Create an elastic beanstalk environment with a RDS instance running Postgres
